@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LaunchPilot · Local worker</title>
+  <style>
+    :root { color-scheme: dark; background: #111612; color: #e9f0e8; font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 820px; margin: 0 auto; padding: 36px 18px; }
+    h1 { font-size: clamp(2rem, 6vw, 3rem); line-height: 1.1; margin: 8px 0; }
+    h2 { font-size: 1.15rem; margin-top: 28px; }
+    p, span { color: #aab8aa; }
+    .tag, a { color: #d1fa73; }
+    .tag { font: 700 .75rem monospace; letter-spacing: .12em; }
+    dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+    dl div { border: 1px solid #354338; background: #1a231b; border-radius: 8px; padding: 12px; }
+    dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+    ol { padding: 0; list-style: none; }
+    li { border-bottom: 1px solid #354338; padding: 10px 0; display: grid; gap: 4px; overflow-wrap: anywhere; }
+  </style>
+  <script src="/worker-page.js" defer></script>
+</head>
+<body>
+  <main>
+    <span class="tag">LAUNCHPILOT / READ-ONLY / ROBINHOOD TESTNET</span>
+    <h1>Local launch worker</h1>
+    <p>Tracks V6 launches while the worker process is running. This page displays the worker’s saved scan. You can close the tab while it tracks.</p>
+    <dl>
+      <div><dt>Sequencer feed</dt><dd id="feed">Connecting…</dd></div>
+      <div><dt>Scanned through</dt><dd id="block">—</dd></div>
+      <div><dt>Last successful scan</dt><dd id="updated">—</dd></div>
+    </dl>
+    <p id="status" role="status">Waiting for the worker.</p>
+    <h2>Recent V6 launches</h2>
+    <ol id="launches"></ol>
+  </main>
+</body>
+</html>

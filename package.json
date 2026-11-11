@@ -1,0 +1,14 @@
+{
+  "name": "vibe-launchpilot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "watch:worker": "node launch-worker.mjs",
+    "build": "tsc --noEmit && vite build",
+    "test": "node --test"
+  },
+  "dependencies": { "viem": "2.57.17" },
+  "devDependencies": { "typescript": "7.0.2", "vite": "8.3.7" }
+}

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Rehearse a Vibe/Vibe token launch on Robinhood Chain Testnet.">
+  <title>Vibe LaunchPilot</title>
+</head>
+<body>
+  <header class="top"><div class="shell header-inner">
+    <a class="brand" href="./"><span aria-hidden="true">↗</span> LaunchPilot</a>
+    <span class="network"><i></i> Robinhood Chain Testnet</span>
+  </div></header>
+  <main class="shell">
+    <div class="intro">
+      <p class="eyebrow"><span>V6</span> CREATOR WORKSPACE</p>
+      <h1>Rehearse your launch.</h1>
+      <p>Set a spending cap, review the economics, and rehearse a Vibe/Vibe launch before approving it in your wallet.</p>
+    </div>
+    <div class="workspace">
+      <form id="draft" class="panel" novalidate>
+        <div class="panel-head"><div><p class="eyebrow">01 / SETUP</p><h2>Launch draft</h2></div><button id="sample" type="button" class="ghost">Load example</button></div>
+        <p class="sample-note" id="sample-note" hidden>Example uses a public testnet sender and existing IPFS metadata. It only runs a simulation.</p>
+        <div class="row">
+          <label>Token name<input name="name" placeholder="Example Token" maxlength="64" required></label>
+          <label>Ticker<input name="symbol" placeholder="EXAMPLE" maxlength="12" required></label>
+        </div>
+        <fieldset class="icon-section">
+          <legend>Token icon</legend>
+          <label>Upload an icon<input id="icon" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          <img id="icon-preview" alt="Selected token icon" width="64" height="64" hidden>
+          <label>Description <small>optional</small><input id="description" maxlength="500"></label>
+          <button class="ghost" id="pin-metadata" type="button" disabled>Prepare public metadata</button>
+          <p class="hint" id="metadata-status" role="status">Choose a PNG, JPEG or WebP, then prepare metadata using your draft and sender address.</p>
+          <label>Public IPFS metadata URI <small>or enter an existing URI</small><input name="metadata" placeholder="ipfs://…" maxlength="128" required></label>
+        </fieldset>
+        <div class="wallet-section">
+          <div class="row">
+            <label>Browser wallet<select id="wallet-picker" aria-label="Browser wallet"><option value="">No wallet detected</option></select></label>
+            <button id="connect" class="ghost wallet-button" type="button">Connect wallet</button>
+          </div>
+          <p class="hint" id="wallet-state" role="status">You can rehearse with a public address. Connect your wallet when preparing a real testnet launch.</p>
+          <button id="switch-network" class="ghost" type="button" hidden>Switch to Robinhood Testnet</button>
+        </div>
+        <label>Testnet sender and project treasury<input name="sender" placeholder="0x…" maxlength="42" required></label>
+        <div class="row">
+          <label>Base tax<select name="tax"><option value="100">1%</option><option value="200">2%</option><option value="300">3%</option></select></label>
+          <label>Opening allocation <small>net tokens</small><input name="opening" inputmode="decimal" value="0" maxlength="37" required></label>
+        </div>
+        <fieldset><legend>Split the project share <small>must total 100%</small></legend>
+          <div class="alloc">
+            <label>Treasury %<input name="treasury" inputmode="decimal" value="100" maxlength="6"></label>
+            <label>Token rewards %<input name="tokenRewards" inputmode="decimal" value="0" maxlength="6"></label>
+            <label>Burn %<input name="burn" inputmode="decimal" value="0" maxlength="6"></label>
+            <label>ETH rewards %<input name="ethRewards" inputmode="decimal" value="0" maxlength="6"></label>
+          </div>
+          <p class="hint" id="split-summary">The project receives 80% of the base tax. The protocol receives 20%.</p>
+        </fieldset>
+        <label class="cap">My spending cap <small>test ETH</small><input name="cap" inputmode="decimal" placeholder="0.01" maxlength="37" required></label>
+        <button class="primary" type="submit" id="run">Simulate on testnet <span aria-hidden="true">↗</span></button>
+        <p class="hint">ETH pair · Airdrop off · Simulation is unsigned</p>
+      </form>
+      <section class="panel review" aria-labelledby="review-heading">
+        <div class="panel-head"><div><p class="eyebrow">02 / PREFLIGHT</p><h2 id="review-heading">Review</h2></div><span class="state" id="badge">Awaiting draft</span></div>
+        <p id="status" role="status">Run a testnet simulation to get a live estimate and check your spending cap.</p>
+        <dl class="cost">
+          <div><dt>Creation fee</dt><dd id="creation">—</dd></div>
+          <div><dt>Opening buy funding</dt><dd id="funding">—</dd></div>
+          <div><dt>Estimated network fee</dt><dd id="gas">—</dd></div>
+          <div class="total"><dt>Estimated total</dt><dd id="total">—</dd></div>
+          <div><dt>Total with gas reserve</dt><dd id="max-total">—</dd></div>
+          <div><dt>Personal cap</dt><dd id="limit">—</dd></div>
+          <div><dt>ETH graduation target</dt><dd id="target">—</dd></div>
+        </dl>
+        <p class="hint" id="block">Estimates can change. The cap applies to this review.</p>
+        <p class="hint">After launch, regular buys have a temporary opening tax. The creator’s opening allocation is exempt from the opening surcharge.</p>
+        <div class="launch-action">
+          <button id="launch" class="primary" type="button" disabled>Launch on Vibe/Vibe <span aria-hidden="true">↗</span></button>
+          <p id="launch-note" class="hint" role="status">Connect a testnet wallet and review a draft within your cap to open the wallet approval.</p>
+          <a id="explorer-link" class="official" target="_blank" rel="noopener noreferrer" hidden>View transaction ↗</a>
+          <a id="token-link" class="official" target="_blank" rel="noopener noreferrer" hidden>View token on Vibe/Vibe ↗</a>
+          <a id="metadata-link" class="official" target="_blank" rel="noopener noreferrer" hidden>View public IPFS metadata ↗</a>
+          <a id="category-link" class="official" href="https://testnet.vibevibe.fun/portfolio?tab=created" target="_blank" rel="noopener noreferrer" hidden>Manage categories on Vibe/Vibe ↗</a>
+          <button id="check-receipt" class="ghost" type="button" hidden>Check transaction</button>
+          <details id="recover" hidden>
+            <summary>Recover a transaction from your wallet</summary>
+            <label>Transaction hash<input id="recover-hash" placeholder="0x…" maxlength="66"></label>
+            <button id="recover-submit" class="ghost" type="button">Check hash</button>
+            <button id="recover-clear" class="ghost" type="button">Clear after checking wallet history</button>
+          </details>
+        </div>
+        <div class="comparison">
+          <div class="panel-head"><h3>Compare revisions</h3><button class="ghost" type="button" id="pin" disabled>Save as baseline</button></div>
+          <p id="compare">Save a reviewed draft, then change the opening allocation or cap and simulate again.</p>
+          <dl id="deltas" hidden>
+            <div><dt>Baseline estimate</dt><dd id="old-total"></dd></div>
+            <div><dt>Current estimate</dt><dd id="new-total"></dd></div>
+            <div><dt>Change in estimated cost</dt><dd id="delta"></dd></div>
+            <div><dt>Baseline cap status</dt><dd id="old-status"></dd></div>
+          </dl>
+          <button class="ghost" type="button" id="clear" hidden>Clear baseline</button>
+        </div>
+        <a class="official" href="https://testnet.vibevibe.fun/create" target="_blank" rel="noopener noreferrer">Open official Vibe/Vibe Create ↗</a>
+      </section>
+    </div>
+    <section class="panel watch" aria-labelledby="watch-heading">
+      <div class="panel-head">
+        <div><p class="eyebrow">03 / READ-ONLY</p><h2 id="watch-heading">Snipe Mode · Launch watch</h2></div>
+        <button class="ghost" id="watch-toggle" type="button">Start tracking</button>
+      </div>
+      <p class="hint" id="watch-status" role="status">Scan the latest V6 testnet launches. Tracking does not place trades.</p>
+      <p class="hint">For tracking with this tab closed, run the local worker and <a class="official" href="http://127.0.0.1:4181/" target="_blank" rel="noopener noreferrer">open its status panel ↗</a>.</p>
+      <ol id="watch-results" aria-label="Latest tracked launches"></ol>
+    </section>
+    <section class="panel watch" aria-labelledby="paper-heading">
+      <p class="eyebrow">04 / SIMULATION</p>
+      <h2 id="paper-heading">Snipe Mode · Paper trade</h2>
+      <p class="hint">Use live V6 ETH curve quotes for one virtual position. No wallet or signature is needed.</p>
+      <form id="paper-form">
+        <fieldset id="paper-fields">
+          <label>Token address<input name="token" id="paper-token" required placeholder="0x…" spellcheck="false"></label>
+          <div class="paper-settings">
+            <label>Buy size (test ETH)<input name="size" inputmode="decimal" value="0.001" required></label>
+            <label>Spend cap with gas (test ETH)<input name="cap" inputmode="decimal" value="0.002" required></label>
+            <label>Max token age (seconds)<input name="age" inputmode="numeric" value="300" required></label>
+            <label>Max buy tax (%)<input name="tax" inputmode="decimal" value="3" required></label>
+            <label>Max price impact (%)<input name="impact" inputmode="decimal" value="2" required></label>
+            <label>Slippage allowance (%)<input name="slippage" inputmode="decimal" value="1" required></label>
+            <label>Take profit (%)<input name="tp" inputmode="decimal" value="20" required></label>
+            <label>Stop loss (%)<input name="sl" inputmode="decimal" value="10" required></label>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button class="ghost" id="paper-quote" type="submit">Check buy quote</button>
+          <button class="primary" id="paper-open" type="submit">Open paper position</button>
+          <button class="ghost" id="paper-reset" type="button" hidden>End paper session</button>
+        </div>
+      </form>
+      <p class="hint" id="paper-status" role="status">Pick a token from Launch watch or paste a V6 address.</p>
+      <p class="hint">Uses live gas price with assumed reserves of 1,000,000 gas to buy and 1,100,000 gas to exit. Virtual trades do not change curve liquidity. The session runs in this tab and clears on reload.</p>
+    </section>
+    <section class="panel watch" aria-labelledby="auto-paper-heading">
+      <p class="eyebrow">05 / SIMULATION</p>
+      <h2 id="auto-paper-heading">Snipe Mode · Automatic paper session</h2>
+      <p class="hint">Evaluate launches created after you start the session. The ledger is saved in this browser. Resume after reopening the tab.</p>
+      <form id="auto-paper-form">
+        <fieldset id="auto-paper-fields" class="paper-settings">
+          <label>Buy size (test ETH)<input name="size" inputmode="decimal" value="0.001" required></label>
+          <label>Buy cap with gas (test ETH)<input name="cap" inputmode="decimal" value="0.002" required></label>
+          <label>Session buy budget (test ETH)<input name="budget" inputmode="decimal" value="0.005" required></label>
+          <label>Max open positions (1–5)<input name="maxOpen" inputmode="numeric" value="2" required></label>
+          <label>Max token age (seconds)<input name="age" inputmode="numeric" value="300" required></label>
+          <label>Max buy tax (%)<input name="tax" inputmode="decimal" value="3" required></label>
+          <label>Max price impact (%)<input name="impact" inputmode="decimal" value="2" required></label>
+          <label>Slippage allowance (%)<input name="slippage" inputmode="decimal" value="1" required></label>
+          <label>Take profit (%)<input name="tp" inputmode="decimal" value="20" required></label>
+          <label>Stop loss (%)<input name="sl" inputmode="decimal" value="10" required></label>
+          <label>Exit share (%)<input name="exitShare" inputmode="decimal" value="100" required></label>
+        </fieldset>
+        <div class="actions">
+          <button class="primary" id="auto-paper-start" type="submit">Start paper session</button>
+          <button class="ghost" id="auto-paper-pause" type="button" hidden>Pause paper session</button>
+          <button class="ghost" id="auto-paper-clear" type="button" hidden>Clear saved session</button>
+        </div>
+      </form>
+      <p class="hint" id="auto-paper-status" role="status">Ready to start.</p>
+      <p class="hint" id="auto-paper-totals" hidden></p>
+      <p class="hint">Buy costs include modeled gas and sales do not refill the buy budget. Exit gas is deducted from proceeds. A partial TP/SL exit leaves the remaining tokens in the ledger and counts toward your open position limit.</p>
+      <ol class="paper-ledger" id="auto-paper-ledger" aria-label="Paper session ledger"></ol>
+    </section>
+    <section class="panel watch" aria-labelledby="test-buy-heading">
+      <p class="eyebrow">06 / ROBINHOOD TESTNET</p>
+      <h2 id="test-buy-heading" tabindex="-1">Snipe Mode · Testnet trade</h2>
+      <p class="hint">Uses the same <a href="#wallet-picker">browser wallet connection</a> as Creator Launch. Your wallet approves each testnet transaction.</p>
+      <p class="hint" id="test-buy-source" hidden></p>
+      <form id="test-buy-form">
+        <fieldset id="test-buy-fields" class="paper-settings">
+          <label>Side<select name="side" id="test-buy-side"><option value="buy">Buy</option><option value="sell">Sell</option></select></label>
+          <label>V6 ETH token address<input name="token" required placeholder="0x…" spellcheck="false"></label>
+          <label data-trade-side="buy">Buy size (test ETH)<input name="size" inputmode="decimal" value="0.0001" required></label>
+          <label data-trade-side="buy">Total cap with gas (test ETH)<input name="cap" inputmode="decimal" value="0.0003" required></label>
+          <label data-trade-side="buy">Max token age (seconds)<input name="age" inputmode="numeric" value="86400" required></label>
+          <label data-trade-side="buy">Max buy tax (%)<input name="tax" inputmode="decimal" value="3" required></label>
+          <label data-trade-side="buy">Max price impact (%)<input name="impact" inputmode="decimal" value="2" required></label>
+          <label data-trade-side="sell" hidden>Tokens to sell<input name="sellSize" inputmode="decimal" placeholder="10000" required disabled></label>
+          <label data-trade-side="sell" hidden>Gas cap per transaction (test ETH)<input name="sellCap" inputmode="decimal" value="0.00005" required disabled></label>
+          <label>Slippage allowance (%)<input name="slippage" inputmode="decimal" value="1" required></label>
+        </fieldset>
+        <div class="actions">
+          <button class="ghost" id="test-buy-review" type="submit">Review testnet buy</button>
+          <button class="primary" id="test-buy-send" type="button" disabled>Open wallet approval</button>
+        </div>
+      </form>
+      <p class="hint" id="test-buy-status" role="status">Connect your browser wallet on Robinhood Chain Testnet to review.</p>
+      <details id="test-buy-payload" hidden>
+        <summary>Review transaction details</summary>
+        <pre id="test-buy-data"></pre>
+      </details>
+      <div class="actions">
+        <a id="test-buy-explorer" target="_blank" rel="noopener noreferrer" hidden>Open transaction in explorer ↗</a>
+        <button class="ghost" id="test-buy-check" type="button" hidden>Check transaction receipt</button>
+      </div>
+      <details id="test-buy-recovery" hidden>
+        <summary>Recover the trade from wallet history</summary>
+        <label>Transaction hash<input id="test-buy-hash" placeholder="0x…" maxlength="66"></label>
+        <button class="ghost" id="test-buy-recover" type="button">Check transaction hash</button>
+        <button class="ghost" id="test-buy-clear" type="button">Clear after checking wallet history</button>
+      </details>
+      <details id="automation-support">
+        <summary>Check wallet support for automated execution</summary>
+        <p class="hint">Read-only check on the wallet selected above. It never requests a signature or new permissions.</p>
+        <button class="ghost" id="automation-check" type="button">Check wallet support</button>
+        <p class="hint" id="automation-status" role="status">Trades require wallet approval.</p>
+      </details>
+    </section>
+    <footer><span>Independent tool for Vibe/Vibe creators.</span><a href="https://testnet.vibevibe.fun/docs/protocol" target="_blank" rel="noopener noreferrer">Protocol reference ↗</a></footer>
+  </main>
+  <script type="module" src="/main.ts"></script>
+  <script type="module" src="/watch-panel.ts"></script>
+  <script type="module" src="/paper-session-panel.ts"></script>
+</body>
+</html>

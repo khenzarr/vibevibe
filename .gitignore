@@ -1,0 +1,10 @@
+/.launchpilot-dev/
+/masterplan.md
+/AGENTS.md
+/node_modules/
+/dist/
+/.worker-state/
+/.watch-test-*/
+.env
+.env.*
+*.log
